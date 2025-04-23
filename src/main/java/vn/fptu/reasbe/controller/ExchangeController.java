@@ -31,7 +31,6 @@ import java.math.BigDecimal;
 public class ExchangeController {
     private final ExchangeService exchangeService;
 
-
     @GetMapping("/current-user")
     @PreAuthorize("hasRole(T(vn.fptu.reasbe.model.constant.AppConstants).ROLE_RESIDENT)")
     public ResponseEntity<BaseSearchPaginationResponse<ExchangeResponse>> getAllExchangesByStatusOfCurrentUser(

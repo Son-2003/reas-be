@@ -129,7 +129,7 @@ VALUES
 INSERT INTO public."USER"
 ("STATUS_ENTITY", "USR_LOG_I", "DTE_LOG_I", "DTE_LOG_U", "USR_LOG_U", "VERSION", "EMAIL", "FULL_NAME", "GENDER", "IMAGE", "IS_FIRST_LOGIN", "PASSWORD", "PHONE", "USER_NAME", "ROLE_ID")
 VALUES
-    ('ACTIVE', 'admin', NOW(), NULL, NULL, 0, 'ngoccuong@reas.vn', 'Ngoc Cuong', 'MALE',  NULL, false, '$2a$10$uEJouiW.IpLccYE5koowSexNlWLsvxUqWJGwbdszt/ANPudcpinHi', '1234567890', 'ngoccuong', 1),
+    ('ACTIVE', 'admin', NOW(), NULL, NULL, 0, 'admin@reas.vn', 'Admin', 'MALE',  NULL, false, '$2a$10$uEJouiW.IpLccYE5koowSexNlWLsvxUqWJGwbdszt/ANPudcpinHi', '1234567890', 'admin', 1),
     ('ACTIVE', 'admin', NOW(), NULL, NULL, 0, 'ducson@reas.vn', 'Duc Son', 'MALE', NULL, false, '$2a$10$uEJouiW.IpLccYE5koowSexNlWLsvxUqWJGwbdszt/ANPudcpinHi', '0987654321', 'ducson', 2),
     ('ACTIVE', 'admin', NOW(), NULL, NULL, 0, 'tiendung@reas.vn', 'Tien Dung', 'MALE', NULL, false, '$2a$10$uEJouiW.IpLccYE5koowSexNlWLsvxUqWJGwbdszt/ANPudcpinHi', '0912345678', 'tiendung', 3),
     ('ACTIVE', 'admin', NOW(), NULL, NULL, 0, 'ducanh@reas.vn', 'Duc Anh', 'MALE', NULL, false, '$2a$10$uEJouiW.IpLccYE5koowSexNlWLsvxUqWJGwbdszt/ANPudcpinHi', '0922334455', 'ducanh', 3),

@@ -45,4 +45,10 @@ public class UserMServiceImpl implements UserMService {
     public User findByUsername(String username) {
         return repository.findUserByUserName(username).orElse(null);
     }
+
+    @Override
+    public User getAdmin() {
+        String adminName = "admin";
+        return repository.findUserByUserName(adminName).orElse(null);
+    }
 }

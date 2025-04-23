@@ -18,7 +18,7 @@ public interface ExchangeService {
 
     ExchangeResponse createExchangeRequest(ExchangeRequestRequest exchangeRequestRequest);
 
-    ExchangeResponse updateExchangeRequestPrice(Integer id, BigDecimal finalPrice);
+    ExchangeResponse updateExchangeRequestPrice(Integer id, BigDecimal negotiatedPrice);
 
     ExchangeResponse reviewExchangeRequest(Integer id, StatusExchangeRequest statusExchangeRequest);
 

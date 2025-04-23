@@ -63,6 +63,10 @@ public class AuthServiceImpl implements AuthService {
                 dto.getUserNameOrEmailOrPhone()
         ).orElseThrow(() -> new BadCredentialsException("error.emailNotExist"));
 
+        if (user.getStatusEntity().equals(StatusEntity.INACTIVE)) {
+            throw new ReasApiException(HttpStatus.FORBIDDEN, "error.userInactive");
+        }
+
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(dto.getUserNameOrEmailOrPhone(), dto.getPassword()));

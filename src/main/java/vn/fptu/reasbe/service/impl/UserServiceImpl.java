@@ -151,13 +151,19 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User location", "id", userLocationId));
 
         userLocationRepository.findByIsPrimaryTrueAndUserAndStatusEntity(user, StatusEntity.ACTIVE)
-                .ifPresent(userLocation -> {
-                    if (!chosenLocation.isPrimary()) {
-                        userLocation.setPrimary(false);
-                        chosenLocation.setPrimary(true);
-                        userLocationRepository.saveAll(List.of(chosenLocation, userLocation));
-                    }
-                });
+                .ifPresentOrElse(
+                        userLocation -> {
+                            if (!chosenLocation.isPrimary()) {
+                                userLocation.setPrimary(false);
+                                chosenLocation.setPrimary(true);
+                                userLocationRepository.saveAll(List.of(chosenLocation, userLocation));
+                            }
+                        },
+                        () -> {
+                            chosenLocation.setPrimary(true);
+                            userLocationRepository.save(chosenLocation);
+                        }
+                );
     }
 
     private Role getStaffRole() {

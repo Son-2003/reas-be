@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Triple;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,7 +25,9 @@ import vn.fptu.reasbe.model.enums.core.StatusEntity;
 import vn.fptu.reasbe.model.enums.payment.MethodPayment;
 import vn.fptu.reasbe.model.enums.payment.StatusPayment;
 import vn.fptu.reasbe.model.enums.subscriptionplan.TypeSubscriptionPlan;
+import vn.fptu.reasbe.model.enums.user.RoleName;
 import vn.fptu.reasbe.model.exception.PayOSException;
+import vn.fptu.reasbe.model.exception.ReasApiException;
 import vn.fptu.reasbe.model.exception.ResourceNotFoundException;
 import vn.fptu.reasbe.repository.PaymentHistoryRepository;
 import vn.fptu.reasbe.service.AuthService;
@@ -66,6 +69,12 @@ public class PaymentHistoryServiceImpl implements PaymentHistoryService {
 
     @Override
     public BaseSearchPaginationResponse<PaymentHistoryDto> searchPaymentHistoryOfUserPagination(int pageNo, int pageSize, String sortBy, String sortDir, SearchPaymentHistoryRequest request, Integer userId) {
+        User currentUser = authService.getCurrentUser();
+
+        if (currentUser.getRole().getName().equals(RoleName.ROLE_RESIDENT) && !currentUser.getId().equals(userId)) {
+            throw new ReasApiException(HttpStatus.FORBIDDEN, "error.userNotAllowed");
+        }
+
         if (userService.getUserById(userId) != null) {
             if (request == null) {
                 request = new SearchPaymentHistoryRequest();

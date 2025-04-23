@@ -26,7 +26,4 @@ public interface ExchangeRequestMapper {
 
     @Mapping(target = "finalPrice", source = "estimatePrice")
     ExchangeRequest toExchangeRequest(ExchangeRequestRequest exchangeRequest);
-
-    @Mapping(target = "exchangeHistory", ignore = true)
-    ExchangeResponse toExchangeRequestResponse(ExchangeRequest exchangeRequest);
 }

@@ -3,7 +3,6 @@ package vn.fptu.reasbe.model.enums.exchange;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import vn.fptu.reasbe.model.enums.core.BaseEnum;
-import vn.fptu.reasbe.model.enums.payment.MethodPayment;
 
 @Getter
 @RequiredArgsConstructor
@@ -15,7 +14,7 @@ public enum StatusExchangeHistory implements BaseEnum.CodeAccessible {
 
     private final String code;
 
-    public static MethodPayment toEnumConstant(String code) {
-        return BaseEnum.toEnumConstant(MethodPayment.class, code);
+    public static StatusExchangeHistory toEnumConstant(String code) {
+        return BaseEnum.toEnumConstant(StatusExchangeHistory.class, code);
     }
 }

@@ -1,5 +1,7 @@
 package vn.fptu.reasbe.model.entity;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import org.hibernate.Length;
 
 import jakarta.persistence.AttributeOverride;
@@ -15,6 +17,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.fptu.reasbe.model.entity.core.AbstractAuditableEntity;
+import vn.fptu.reasbe.model.enums.criticalreport.StatusCriticalReport;
+import vn.fptu.reasbe.model.enums.criticalreport.TypeCriticalReport;
+
+import java.time.LocalDateTime;
 
 /**
  *
@@ -32,7 +38,8 @@ public class CriticalReport extends AbstractAuditableEntity {
 
     @NotNull
     @Column(name = "TYPE_REPORT")
-    private String typeReport; // TODO: ntig change to enum TypeReport later
+    @Enumerated(EnumType.STRING)
+    private TypeCriticalReport typeReport;
 
     @NotNull
     @Column(name = "CONTENT_REPORT")
@@ -43,6 +50,26 @@ public class CriticalReport extends AbstractAuditableEntity {
 
     @Column(name = "IMAGE_URL", length = Length.LOB_DEFAULT)
     private String imageUrl;
+
+    @Column(name = "RESOLVED_TIME")
+    private LocalDateTime resolvedTime;
+
+    @NotNull
+    @Column(name = "STATUS_CRITICAL_REPORT")
+    @Enumerated(EnumType.STRING)
+    private StatusCriticalReport statusCriticalReport;
+
+    @ManyToOne
+    @JoinColumn(name = "USER_ID")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "FEEDBACK_ID")
+    private Feedback feedback;
+
+    @ManyToOne
+    @JoinColumn(name = "EXCHANGE_REQUEST_ID")
+    private ExchangeRequest exchangeRequest;
 
     @ManyToOne
     @JoinColumn(name = "REPORTER_ID")

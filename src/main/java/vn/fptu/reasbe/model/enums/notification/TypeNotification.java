@@ -8,5 +8,6 @@ public enum TypeNotification {
     CHAT_MESSAGE,
     UPLOAD_ITEM,
     EXCHANGE_REQUEST,
-    ITEM_EXPIRED
+    ITEM_EXPIRED,
+    REPORT_RESPONSE
 }

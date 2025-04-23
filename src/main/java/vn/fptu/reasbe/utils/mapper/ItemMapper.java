@@ -48,7 +48,7 @@ public interface ItemMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "desiredItem", ignore = true)
     @Mapping(target = "moneyAccepted", source = "isMoneyAccepted")
-    void updateItem(@MappingTarget Item user, UpdateItemRequest request);
+    void updateItem(@MappingTarget Item item, UpdateItemRequest request);
 
     default boolean checkIfFavorite(Integer itemId, List<Integer> favIds) {
         return favIds != null && !favIds.isEmpty() && favIds.contains(itemId);

@@ -138,7 +138,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     private void validateNotification(Notification notification) {
-        if (StringUtils.isBlank(notification.getSenderId())) {
+        if (StringUtils.isBlank(notification.getRecipientId())) {
             throw new IllegalArgumentException("error.notification.required.recipientId");
         }
         if (StringUtils.isBlank(notification.getContent())) {

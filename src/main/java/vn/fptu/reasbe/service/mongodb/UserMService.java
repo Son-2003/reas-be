@@ -14,4 +14,5 @@ public interface UserMService {
     List<User> findConnectedUsers();
     User findByRefId(Integer refId);
     User findByUsername(String username);
+    User getAdmin();
 }
