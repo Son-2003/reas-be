@@ -2,6 +2,7 @@ package vn.fptu.reasbe.service.impl;
 
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -79,16 +80,16 @@ public class AuthServiceImpl implements AuthService {
             revokeAllTokenByUser(user);
             saveUserToken(accessToken, refreshToken, user);
 
-            if (dto.getRegistrationTokens() != null && !dto.getRegistrationTokens().isEmpty()) {
-                // save user registration tokens to mongodb
-                vn.fptu.reasbe.model.mongodb.User userM = userMService.findByRefId(user.getId());
-                if (userM != null) {
-                    userM.setRegistrationTokens(dto.getRegistrationTokens());
-                    userMService.saveUser(userM);
-                } else {
-                    saveNewUserToMongoDb(dto.getRegistrationTokens(), user);
-                }
+//            if (dto.getRegistrationTokens() != null && !dto.getRegistrationTokens().isEmpty()) {
+            // save user registration tokens to mongodb
+            vn.fptu.reasbe.model.mongodb.User userM = userMService.findByRefId(user.getId());
+            if (userM != null) {
+                userM.setRegistrationTokens(dto.getRegistrationTokens());
+                userMService.saveUser(userM);
+            } else {
+                saveNewUserToMongoDb(dto.getRegistrationTokens(), user);
             }
+//            }
 
             return new JWTAuthResponse(accessToken, refreshToken, user.getRole().getName());
 
