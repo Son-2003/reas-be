@@ -188,6 +188,7 @@ VALUES
     ('ACTIVE', 'admin', NOW(), NULL, NULL, 0, 'Bosch Kitchen Mixer', 'Stand mixer with multiple speed settings.', '2025-04-08 12:00:00', '2025-04-28 12:00:00','LNEW', 'AVAI', 7, 9, 'https://i.ytimg.com/vi/6_uLJQ14LKg/sddefault.jpg', 6, 10, 'DESI', 3500000, 3, FALSE),
     ('ACTIVE', 'admin', NOW(), NULL, NULL, 0, 'Eufy Video Doorbell', 'Smart doorbell with 2K resolution and motion detection.', '2025-04-18 12:00:00', '2025-04-28 12:00:00','EXCE', 'AVAI', 49, 5, 'https://shopdocla.vn/wp-content/uploads/2023/10/z4797756818217_42bf1646bfebde0bf05707ddaec05c2a.jpg', 7, 12, 'DESI', 2500000, 4, FALSE);
 
+
 INSERT INTO public."ITEM_METHODEXCHANGES" ("ITEM_ITEM_ID", "METHOD_EXCHANGE") VALUES
                                                                                   (1, 'PICK'),
                                                                                   (1, 'MEET'),
