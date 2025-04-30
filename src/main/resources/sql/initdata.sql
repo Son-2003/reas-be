@@ -153,9 +153,9 @@ VALUES
 INSERT INTO public."USER_LOCATION"
 ("STATUS_ENTITY", "USR_LOG_I", "DTE_LOG_I", "DTE_LOG_U", "USR_LOG_U", "VERSION", "IS_PRIMARY", "SPECIFIC_ADDRESS", "LOCATION_ID", "USER_ID", "LATITUDE", "LONGITUDE")
 VALUES
-    ('ACTIVE', 'admin', NOW(), NULL, NULL, 0, true, 'Cổng Huỳnh Thúc Kháng, Công viên Indira Gandhi, Huỳnh Thúc Kháng, Thành Công, Ba Đình, Hà Nội', 1, 3, 21.017938, 105.812312),  -- Ti Dung - Vinhomes Grand Park
+    ('ACTIVE', 'admin', NOW(), NULL, NULL, 0, true, 'S2.01 Vinhomes Grand Park, Đ. Cầu Vồng 2, Long Thạnh Mỹ, Thủ Đức, Hồ Chí Minh, Việt Nam', 1, 3, 10.838138388692384, 106.83186978687223),  -- Ti Dung - Vinhomes Grand Park
     ('ACTIVE', 'admin', NOW(), NULL, NULL, 0, false, '123 Lê Quang Định, Phường 14, Bình Thạnh, Hồ Chí Minh', 2, 3, 10.80685, 106.696439),  -- Ti Dung - Masteri Thao Dien
-    ('ACTIVE', 'admin', NOW(), NULL, NULL, 0, false, 'Mai Chí Thọ, Giang Biên, Long Biên, Hà Nội', 3, 3, 21.028511, 105.804817),  -- Ti Dung - Cityland Park Hills
+    ('ACTIVE', 'admin', NOW(), NULL, NULL, 0, false, 'Đường số 10, Cityland Park Hill, Gò Vấp, Hồ Chí Minh, Việt Nam', 3, 3, 10.837065651819808, 106.66714645248554),  -- Ti Dung - Cityland Park Hills
     ('ACTIVE', 'admin', NOW(), NULL, NULL, 0, false, 'Lê Văn Duyệt, Phường 1, Bình Thạnh, Hồ Chí Minh', 4, 3, 10.795252, 106.696315),  -- Ti Dung - The Ascent
     ('ACTIVE', 'admin', NOW(), NULL, NULL, 0, true, 'Nguyễn Văn Đậu, Phường 5, Bình Thạnh, Hồ Chí Minh', 1, 4, 10.810762, 106.690142),  -- Duc Anh - Vinhomes Grand Park
     ('ACTIVE', 'admin', NOW(), NULL, NULL, 0, false, 'Bạch Đằng, Phường 2, Tân Bình, Hồ Chí Minh', 5, 4, 10.810762, 106.690142),  -- Duc Anh - Saigon Pearl

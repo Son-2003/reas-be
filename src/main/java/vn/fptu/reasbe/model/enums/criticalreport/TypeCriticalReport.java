@@ -1,7 +1,7 @@
 package vn.fptu.reasbe.model.enums.criticalreport;
 
 public enum TypeCriticalReport{
-    USER,
+    RESIDENT,
     FEEDBACK,
     EXCHANGE
 }

@@ -32,7 +32,7 @@ public class CriticalReportResponse {
 
     LocalDateTime approvedTime;
 
-    UserResponse user;
+    UserResponse resident;
 
     FeedbackResponse feedback;
 

@@ -1,8 +1,6 @@
 package vn.fptu.reasbe.model.dto.desireditem;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,8 +24,6 @@ public class DesiredItemDto {
 
     Integer brandId;
 
-    @NotNull(message = "Min price must not be blank")
-    @Min(value = 0, message = "Min price must be greater than or equal to 0")
     BigDecimal minPrice;
 
     BigDecimal maxPrice;

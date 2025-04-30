@@ -60,8 +60,8 @@ public class CriticalReport extends AbstractAuditableEntity {
     private StatusCriticalReport statusCriticalReport;
 
     @ManyToOne
-    @JoinColumn(name = "USER_ID")
-    private User user;
+    @JoinColumn(name = "RESIDENT_ID")
+    private User resident;
 
     @ManyToOne
     @JoinColumn(name = "FEEDBACK_ID")

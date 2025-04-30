@@ -13,6 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.Length;
 import vn.fptu.reasbe.model.entity.core.AbstractAuditableEntity;
 
 /**
@@ -48,7 +49,7 @@ public class Feedback extends AbstractAuditableEntity {
     @Column(name = "COMMENT")
     private String comment;
 
-    @Column(name = "IMAGE_URL")
+    @Column(name = "IMAGE_URL", length = Length.LOB_DEFAULT)
     private String imageUrl;
 
     @NotNull

@@ -348,7 +348,7 @@ public class ExchangeServiceImpl implements ExchangeService {
         }
 
         Notification notification = new Notification(sender.getUserName(), recipient.getUserName(),
-                sender.getFullName() + "confirm the negotiated price offered for exchange #EX" + request.getId(),
+                sender.getFullName() + " confirm the negotiated price offered for exchange #EX" + request.getId(),
                 new Date(), TypeNotification.EXCHANGE_REQUEST, recipient.getRegistrationTokens());
         notificationService.saveAndSendNotification(notification);
 
@@ -390,9 +390,9 @@ public class ExchangeServiceImpl implements ExchangeService {
         if (Boolean.TRUE.equals(exchangeHistory.getBuyerConfirmation()) &&
                 Boolean.TRUE.equals(exchangeHistory.getSellerConfirmation())) {
             exchangeHistory.setStatusExchangeHistory(StatusExchangeHistory.SUCCESSFUL);
-            exchangeHistory.getExchangeRequest().getSellerItem().setStatusItem(StatusItem.SOLD);
+            exchangeHistory.getExchangeRequest().getSellerItem().setStatusItem(StatusItem.EXCHANGED);
             if (exchangeHistory.getExchangeRequest().getBuyerItem() != null) {
-                exchangeHistory.getExchangeRequest().getBuyerItem().setStatusItem(StatusItem.SOLD);
+                exchangeHistory.getExchangeRequest().getBuyerItem().setStatusItem(StatusItem.EXCHANGED);
             }
 
             vn.fptu.reasbe.model.mongodb.User senderAdmin = userMService.getAdmin();
@@ -537,9 +537,9 @@ public class ExchangeServiceImpl implements ExchangeService {
         if (!pendingEvidenceExchanges.isEmpty()) {
             pendingEvidenceExchanges.forEach(request -> {
                 request.getExchangeHistory().setStatusExchangeHistory(StatusExchangeHistory.SUCCESSFUL);
-                request.getSellerItem().setStatusItem(StatusItem.SOLD);
+                request.getSellerItem().setStatusItem(StatusItem.EXCHANGED);
                 if (request.getBuyerItem() != null) {
-                    request.getBuyerItem().setStatusItem(StatusItem.SOLD);
+                    request.getBuyerItem().setStatusItem(StatusItem.EXCHANGED);
                 }
 
                 vn.fptu.reasbe.model.mongodb.User sender = userMService.getAdmin();

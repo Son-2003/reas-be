@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.Length;
 import vn.fptu.reasbe.model.entity.core.AbstractAuditableEntity;
 import vn.fptu.reasbe.model.enums.exchange.StatusExchangeHistory;
 
@@ -36,10 +37,10 @@ public class ExchangeHistory extends AbstractAuditableEntity {
     @Column(name = "SELLER_CONFIRMATION")
     private Boolean sellerConfirmation;
 
-    @Column(name = "BUYER_IMAGE_URL")
+    @Column(name = "BUYER_IMAGE_URL", length = Length.LOB_DEFAULT)
     private String buyerImageUrl;
 
-    @Column(name = "SELLER_IMAGE_URL")
+    @Column(name = "SELLER_IMAGE_URL", length = Length.LOB_DEFAULT)
     private String sellerImageUrl;
 
     @Column(name = "BUYER_ADDITIONAL_NOTES")

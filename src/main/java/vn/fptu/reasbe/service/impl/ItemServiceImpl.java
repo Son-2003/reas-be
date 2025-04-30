@@ -1,6 +1,7 @@
 package vn.fptu.reasbe.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+
 import org.apache.logging.log4j.util.Strings;
 import org.locationtech.jts.geom.Point;
 import org.springframework.ai.document.Document;
@@ -16,7 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.web.client.RestTemplate;
+
 import vn.fptu.reasbe.model.constant.AppConstants;
 import vn.fptu.reasbe.model.dto.core.BaseSearchPaginationResponse;
 import vn.fptu.reasbe.model.dto.desireditem.DesiredItemDto;
@@ -58,6 +61,7 @@ import vn.fptu.reasbe.utils.common.GeometryUtils;
 import vn.fptu.reasbe.utils.mapper.DesiredItemMapper;
 import vn.fptu.reasbe.utils.mapper.ItemMapper;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -114,7 +118,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public BaseSearchPaginationResponse<ItemResponse> getAllItemOfUserByStatus(int pageNo, int pageSize, String sortBy, String sortDir, Integer userId, StatusItem statusItem) {
-        if (statusItem.equals(StatusItem.AVAILABLE) || statusItem.equals(StatusItem.SOLD)) {
+        if (statusItem.equals(StatusItem.AVAILABLE) || statusItem.equals(StatusItem.EXCHANGED)) {
             return BaseSearchPaginationResponse.of(getAllItemByUserIdAndStatusItem(userId, statusItem, getPageable(pageNo, pageSize, sortBy, sortDir)).map(this::mapToItemResponsesWithFavorite));
         } else {
             throw new ReasApiException(HttpStatus.BAD_REQUEST, "error.invalidStatusItem");
@@ -143,7 +147,9 @@ public class ItemServiceImpl implements ItemService {
     public Item uploadItem(UploadItemRequest request) {
         User currentUser = authService.getCurrentUser();
 
-        validateMaxItemUploadedInCurrentMonth(currentUser);
+        if (Boolean.TRUE.equals(isReachMaxOfUploadItemThisMonth())) {
+            throw new ReasApiException(HttpStatus.BAD_REQUEST, "error.reachMaxUploadItem");
+        }
 
         Item newItem = itemMapper.toEntity(request);
         newItem.setOwner(currentUser);
@@ -358,7 +364,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public void extendItem(Item item, SubscriptionPlan plan) {
-        if (item.getStatusItem() != StatusItem.EXPIRED){
+        if (item.getStatusItem() != StatusItem.EXPIRED) {
             throw new ReasApiException(HttpStatus.BAD_REQUEST, "error.itemIsNotExpiredYet");
         }
         item.setStatusItem(StatusItem.AVAILABLE);
@@ -379,7 +385,7 @@ public class ItemServiceImpl implements ItemService {
         SubscriptionPlan planTypeExtension = subscriptionPlanService.getSubscriptionPlanTypeExtension();
 
         Item item = getItemById(itemId);
-        if (item.getStatusItem() != StatusItem.EXPIRED){
+        if (item.getStatusItem() != StatusItem.EXPIRED) {
             throw new ReasApiException(HttpStatus.BAD_REQUEST, "error.itemIsNotExpiredYet");
         }
         item.setStatusItem(StatusItem.AVAILABLE);
@@ -528,18 +534,68 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
-    private void validateMaxItemUploadedInCurrentMonth(User currentUser) {
-        LocalDateTime firstDayOfMonth = DateUtils.getFirstDayOfCurrentMonth();
-        LocalDateTime lastDayOfMonth = DateUtils.getLastDayOfCurrentMonth();
+    @Override
+    public Boolean isReachMaxOfUploadItemThisMonth() {
+        User currentUser = authService.getCurrentUser();
 
-        int countItem = itemRepository.countByOwnerAndStatusItemInAndStatusEntityAndCreationDateBetween(
-                currentUser, List.of(StatusItem.IN_EXCHANGE, StatusItem.PENDING, StatusItem.AVAILABLE), StatusEntity.ACTIVE, firstDayOfMonth, lastDayOfMonth);
+        LocalDateTime monthStart = DateUtils.getFirstDayOfCurrentMonth();
+        LocalDateTime now = DateUtils.getCurrentDateTime();
 
-        int maximumItem = userSubscriptionService.getUserCurrentSubscription() != null ? AppConstants.MAX_ITEM_UPLOADED_PREMIUM : AppConstants.MAX_ITEM_UPLOADED;
+        // Count item uploaded in the current month
+        List<StatusItem> countedStatuses = List.of(
+                StatusItem.IN_EXCHANGE,
+                StatusItem.PENDING,
+                StatusItem.AVAILABLE,
+                StatusItem.EXPIRED,
+                StatusItem.EXCHANGED,
+                StatusItem.NO_LONGER_FOR_EXCHANGE
+        );
 
-        if (countItem >= maximumItem) {
-            throw new ReasApiException(HttpStatus.BAD_REQUEST, "error.itemUploadAtMax");
+        int totalUploadedThisMonth = itemRepository
+                .countByOwnerAndStatusItemInAndStatusEntityAndCreationDateBetween(
+                        currentUser,
+                        countedStatuses,
+                        StatusEntity.ACTIVE,
+                        monthStart,
+                        now
+                );
+
+        // Get user’s most recent subscription in current month
+        UserSubscription lastSub = userSubscriptionService.getUserSubscriptionInCurrentMonth();
+
+        if (Objects.nonNull(lastSub)) {
+            LocalDateTime endDate = lastSub.getEndDate();
+            // still premium? endDate ≥ today
+            if (!endDate.isBefore(now) && totalUploadedThisMonth >= AppConstants.MAX_ITEM_UPLOADED_PREMIUM) {
+                return true;
+            }
+
+            // expired mid‐month? (endDate in [monthStart…today))
+            if (!endDate.isBefore(monthStart) && endDate.isBefore(now)) {
+                // Count how many were uploaded before subscription expired
+                int usedBeforeExpiry = itemRepository
+                        .countByOwnerAndStatusItemInAndStatusEntityAndCreationDateBetween(
+                                currentUser,
+                                countedStatuses,
+                                StatusEntity.ACTIVE,
+                                monthStart,
+                                endDate
+                        );
+
+                // Compute how many extra uploads remain
+                int premiumLeft = AppConstants.MAX_ITEM_UPLOADED_PREMIUM - usedBeforeExpiry;
+                int fallbackFreeCap = AppConstants.MAX_ITEM_UPLOADED;
+                int allowedAfterExpiry = Math.min(premiumLeft, fallbackFreeCap);
+
+                // If they’ve already hit the combined allowance, block
+                if (totalUploadedThisMonth >= usedBeforeExpiry + allowedAfterExpiry) {
+                    return true;
+                }
+            }
         }
+
+        // No subscription this month (or expired before month start)
+        return totalUploadedThisMonth >= AppConstants.MAX_ITEM_UPLOADED;
     }
 
     private Page<Item> getAllItemByUserIdAndStatusItem(Integer userId, StatusItem statusItem, Pageable pageable) {
@@ -552,7 +608,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private void validateDesiredItemPrice(DesiredItemDto dto) {
-        if (dto.getMaxPrice() != null && (dto.getMinPrice().compareTo(dto.getMaxPrice()) > 0)) {
+        if (Objects.nonNull(dto.getMaxPrice()) && Objects.nonNull(dto.getMinPrice()) && (dto.getMinPrice().compareTo(dto.getMaxPrice()) > 0)) {
             throw new ReasApiException(HttpStatus.BAD_REQUEST, "error.minPriceGreaterThanMaxPrice");
         }
     }

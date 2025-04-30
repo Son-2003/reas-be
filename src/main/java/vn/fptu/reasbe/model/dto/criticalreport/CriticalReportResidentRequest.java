@@ -24,7 +24,7 @@ public class CriticalReportResidentRequest {
 
     String imageUrl;
 
-    Integer userId;
+    Integer residentId;
 
     Integer feedbackId;
 

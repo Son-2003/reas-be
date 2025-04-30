@@ -42,7 +42,7 @@ public class CriticalReportRepositoryCustomImpl extends AbstractRepositoryCustom
 
         if (request != null) {
             if (StringUtils.isNotBlank(request.getUserFullName())) {
-                builder.and(criticalReport.user.fullName.containsIgnoreCase(request.getUserFullName().trim()));
+                builder.and(criticalReport.resident.fullName.containsIgnoreCase(request.getUserFullName().trim()));
             }
             if (StringUtils.isNotBlank(request.getReporterName())) {
                 builder.and(criticalReport.reporter.fullName.containsIgnoreCase(request.getReporterName().trim()));
@@ -59,8 +59,8 @@ public class CriticalReportRepositoryCustomImpl extends AbstractRepositoryCustom
             if (request.getAnswererIds() != null && !request.getAnswererIds().isEmpty()) {
                 builder.and(criticalReport.answerer.id.in(request.getAnswererIds()));
             }
-            if (request.getUserIds() != null && !request.getUserIds().isEmpty()) {
-                builder.and(criticalReport.user.id.in(request.getUserIds()));
+            if (request.getResidentIds() != null && !request.getResidentIds().isEmpty()) {
+                builder.and(criticalReport.resident.id.in(request.getResidentIds()));
             }
             if (request.getFeedbackIds() != null && !request.getFeedbackIds().isEmpty()) {
                 builder.and(criticalReport.feedback.id.in(request.getFeedbackIds()));
@@ -93,9 +93,9 @@ public class CriticalReportRepositoryCustomImpl extends AbstractRepositoryCustom
             case "statusCriticalReport":
                 return new OrderSpecifier<>(
                         direction.isAscending() ? Order.ASC : Order.DESC, criticalReport.statusCriticalReport);
-            case "user":
+            case "resident":
                 return new OrderSpecifier<>(
-                        direction.isAscending() ? Order.ASC : Order.DESC, criticalReport.user.fullName);
+                        direction.isAscending() ? Order.ASC : Order.DESC, criticalReport.resident.fullName);
             case "feedback":
                 return new OrderSpecifier<>(
                         direction.isAscending() ? Order.ASC : Order.DESC, criticalReport.feedback.id);
@@ -147,7 +147,7 @@ public class CriticalReportRepositoryCustomImpl extends AbstractRepositoryCustom
                 new JPAQuery<CriticalReport>(em)
                         .from(criticalReport)
                         .leftJoin(criticalReport.exchangeRequest).fetchJoin()
-                        .leftJoin(criticalReport.user).fetchJoin()
+                        .leftJoin(criticalReport.resident).fetchJoin()
                         .leftJoin(criticalReport.feedback).fetchJoin()
                         .leftJoin(criticalReport.reporter).fetchJoin()
                         .leftJoin(criticalReport.answerer).fetchJoin()

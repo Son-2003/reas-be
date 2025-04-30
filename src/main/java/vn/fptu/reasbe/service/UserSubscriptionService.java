@@ -16,4 +16,6 @@ public interface UserSubscriptionService {
     UserSubscription getUserCurrentSubscription();
 
     void updateNumberOfExtensionLeft(UserSubscription userSubscription);
+
+    UserSubscription getUserSubscriptionInCurrentMonth();
 }

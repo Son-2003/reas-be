@@ -54,4 +54,6 @@ public interface ItemService {
     BaseSearchPaginationResponse<ItemResponse> findNearbyItems(int pageNo, int pageSize, double latitude, double longitude, double distance);
 
     Boolean deleteItem(Integer id);
+
+    Boolean isReachMaxOfUploadItemThisMonth();
 }

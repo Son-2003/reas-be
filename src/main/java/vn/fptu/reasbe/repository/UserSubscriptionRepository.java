@@ -24,4 +24,7 @@ public interface UserSubscriptionRepository extends JpaRepository<UserSubscripti
             LocalDateTime currentDate1,
             LocalDateTime currentDate2
     );
+
+    UserSubscription findByUserIdAndSubscriptionPlan_TypeSubscriptionPlanAndEndDateIsBetweenAndPaymentHistory_StatusPaymentAndStatusEntity(
+            Integer userId, TypeSubscriptionPlan typeSubscriptionPlan, LocalDateTime startOfCurrentMonth, LocalDateTime currentTime, StatusPayment statusPayment, StatusEntity statusEntity);
 }

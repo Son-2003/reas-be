@@ -77,4 +77,17 @@ public class UserSubscriptionServiceImpl implements UserSubscriptionService {
             throw new ReasApiException(HttpStatus.BAD_REQUEST, "error.noExtensionLeft");
         }
     }
+
+    @Override
+    public UserSubscription getUserSubscriptionInCurrentMonth() {
+        User currentUser = authService.getCurrentUser();
+        return userSubscriptionRepository.findByUserIdAndSubscriptionPlan_TypeSubscriptionPlanAndEndDateIsBetweenAndPaymentHistory_StatusPaymentAndStatusEntity(
+                currentUser.getId(),
+                TypeSubscriptionPlan.PREMIUM_PLAN,
+                DateUtils.getFirstDayOfCurrentMonth(),
+                DateUtils.getCurrentDateTime(),
+                StatusPayment.SUCCESS,
+                StatusEntity.ACTIVE
+        );
+    }
 }

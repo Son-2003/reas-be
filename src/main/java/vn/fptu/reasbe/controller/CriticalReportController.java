@@ -56,7 +56,8 @@ public class CriticalReportController {
     }
 
     @PutMapping
-    @PreAuthorize("hasRole(T(vn.fptu.reasbe.model.constant.AppConstants).ROLE_STAFF)")
+    @PreAuthorize("hasRole(T(vn.fptu.reasbe.model.constant.AppConstants).ROLE_STAFF)"+
+            "or hasRole(T(vn.fptu.reasbe.model.constant.AppConstants).ROLE_ADMIN)")
     public ResponseEntity<CriticalReportResponse> reviewCriticalReport(@RequestBody @Valid CriticalReportStaffRequest request) {
         return ResponseEntity.ok(criticalReportService.reviewCriticalReport(request));
     }

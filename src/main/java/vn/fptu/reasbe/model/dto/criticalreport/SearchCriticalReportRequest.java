@@ -20,7 +20,7 @@ public class SearchCriticalReportRequest {
     List<Integer> ids;
     List<TypeCriticalReport> typeReports;
     String userFullName;
-    List<Integer> userIds;
+    List<Integer> residentIds;
     List<Integer> feedbackIds;
     List<Integer> exchangeRequestIds;
     String reporterName;

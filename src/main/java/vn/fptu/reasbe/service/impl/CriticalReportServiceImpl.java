@@ -63,6 +63,9 @@ public class CriticalReportServiceImpl implements CriticalReportService {
         User currUser = authService.getCurrentUser();
 
         if (currUser.getRole().getName().equals(RoleName.ROLE_RESIDENT)) {
+            if (searchRequest == null) {
+                searchRequest = new SearchCriticalReportRequest();
+            }
             searchRequest.setReporterIds(List.of(currUser.getId()));
         }
 
@@ -106,8 +109,8 @@ public class CriticalReportServiceImpl implements CriticalReportService {
             return handleExchangeReport(request.getExchangeId(), criticalReport, currentUser);
         } else if (request.getFeedbackId() != null) {
             handleFeedbackReport(request.getFeedbackId(), criticalReport, currentUser);
-        } else if (request.getUserId() != null) {
-            handleUserReport(request.getUserId(), criticalReport, currentUser);
+        } else if (request.getResidentId() != null) {
+            handleUserReport(request.getResidentId(), criticalReport, currentUser);
         } else {
             throw new ReasApiException(HttpStatus.BAD_REQUEST, "error.mustHaveUserOrFeedbackOrExchange");
         }
@@ -148,16 +151,16 @@ public class CriticalReportServiceImpl implements CriticalReportService {
         criticalReport.setTypeReport(TypeCriticalReport.FEEDBACK);
     }
 
-    private void handleUserReport(Integer userId, CriticalReport criticalReport, User currentUser) {
-        if (Objects.equals(userId, currentUser.getId())) {
+    private void handleUserReport(Integer residentId, CriticalReport criticalReport, User currentUser) {
+        if (Objects.equals(residentId, currentUser.getId())) {
             throw new ReasApiException(HttpStatus.BAD_REQUEST, "error.cannotReportYourself");
         }
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+        User user = userRepository.findById(residentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Resident", "id", residentId));
 
-        criticalReport.setUser(user);
-        criticalReport.setTypeReport(TypeCriticalReport.USER);
+        criticalReport.setResident(user);
+        criticalReport.setTypeReport(TypeCriticalReport.RESIDENT);
     }
 
     private void processAutoApprovalIfExists(ExchangeRequest exchange, CriticalReport criticalReport, User currentUser) {

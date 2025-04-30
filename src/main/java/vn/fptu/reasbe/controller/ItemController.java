@@ -159,4 +159,10 @@ public class ItemController {
     public ResponseEntity<Boolean> deleteItem(@PathVariable Integer id) {
         return ResponseEntity.ok(itemService.deleteItem(id));
     }
+
+    @PreAuthorize("hasRole(T(vn.fptu.reasbe.model.constant.AppConstants).ROLE_RESIDENT)")
+    @GetMapping("/check-upload-item-reach-limit")
+    public ResponseEntity<Boolean> isReachMaxOfUploadItemThisMonth() {
+        return ResponseEntity.ok(itemService.isReachMaxOfUploadItemThisMonth());
+    }
 }
