@@ -148,6 +148,22 @@ public class ExchangeRequestRepositoryCustomImpl extends AbstractRepositoryCusto
                 .fetch();
     }
 
+    @Override
+    public boolean existByItemAndStatus(Item item, StatusExchangeRequest status) {
+        QExchangeRequest exchangeRequest = QExchangeRequest.exchangeRequest;
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        builder.and(exchangeRequest.statusExchangeRequest.eq(status))
+                .and(exchangeRequest.sellerItem.eq(item)
+                        .or(exchangeRequest.buyerItem.eq(item)));
+
+        return new JPAQuery<ExchangeRequest>(em)
+                .from(exchangeRequest)
+                .where(builder)
+                .fetchFirst() != null;
+    }
+
     private BooleanBuilder getFilterForSellerItemBuyerItemAndPaidBy(QExchangeRequest exchangeRequest, User user) {
         BooleanBuilder builder = new BooleanBuilder();
 
@@ -166,7 +182,6 @@ public class ExchangeRequestRepositoryCustomImpl extends AbstractRepositoryCusto
 
         return builder;
     }
-
 
     private Page<ExchangeRequest> getPage(JPAQuery<ExchangeRequest> query, Pageable pageable) {
         if (query == null || pageable == null) {

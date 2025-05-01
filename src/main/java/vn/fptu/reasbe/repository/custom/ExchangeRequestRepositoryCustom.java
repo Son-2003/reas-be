@@ -21,4 +21,6 @@ public interface ExchangeRequestRepositoryCustom{
     List<ExchangeRequest> findAllExceedingDateExchanges(LocalDateTime date, StatusExchangeHistory status);
 
     List<ExchangeRequest> findAllByStatusAndSellerItemOrBuyerItem(StatusExchangeRequest statusExchangeRequest, Item sellerItem, Item buyerItem);
+
+    boolean existByItemAndStatus(Item item, StatusExchangeRequest statusExchangeRequest);
 }

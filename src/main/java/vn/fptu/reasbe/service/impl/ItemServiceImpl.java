@@ -183,6 +183,13 @@ public class ItemServiceImpl implements ItemService {
             throw new ReasApiException(HttpStatus.BAD_REQUEST, "error.cannotUpdateItem");
         }
 
+        if (existedItem.getStatusItem().equals(StatusItem.AVAILABLE)) {
+            boolean isInAvailableExchangeRequest = exchangeRequestRepository.existByItemAndStatus(existedItem, StatusExchangeRequest.PENDING);
+            if (isInAvailableExchangeRequest) {
+                throw new ReasApiException(HttpStatus.BAD_REQUEST, "error.updatedItemExistsInExchangeRequest");
+            }
+        }
+
         itemMapper.updateItem(existedItem, request);
         existedItem.setCategory(categoryService.getCategoryById(request.getCategoryId()));
         existedItem.setBrand(brandService.getBrandById(request.getBrandId()));
@@ -241,10 +248,12 @@ public class ItemServiceImpl implements ItemService {
 
         if (status.equals(StatusItem.AVAILABLE)) {
             pendingItem.setStatusItem(StatusItem.AVAILABLE);
-            pendingItem.setApprovedTime(DateUtils.getCurrentDateTime());
 
-            int expiredTime = userSubscriptionService.getUserCurrentSubscription() != null ? AppConstants.EXPIRED_TIME_WEEKS_PREMIUM : AppConstants.EXPIRED_TIME_WEEKS;
-            pendingItem.setExpiredTime(DateUtils.toStartOfDay(pendingItem.getApprovedTime().plusWeeks(expiredTime)));
+            if (pendingItem.getExpiredTime() == null) {
+                int expiredTime = userSubscriptionService.getUserCurrentSubscription() != null ? AppConstants.EXPIRED_TIME_WEEKS_PREMIUM : AppConstants.EXPIRED_TIME_WEEKS;
+                pendingItem.setApprovedTime(DateUtils.getCurrentDateTime());
+                pendingItem.setExpiredTime(DateUtils.toStartOfDay(pendingItem.getApprovedTime().plusWeeks(expiredTime)));
+            }
 
             notification = new Notification(sender.getUserName(), recipient.getUserName(),
                     "Your item has been approved",
