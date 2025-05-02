@@ -148,6 +148,11 @@ public class ItemController {
         return ResponseEntity.ok(itemService.findNearbyItems(pageNo, pageSize, latitude, longitude, distance));
     }
 
+    @GetMapping("/updated-item-in-pending-exchange")
+    public ResponseEntity<Boolean> isUpdatedItemInPendingExchange(@RequestParam Integer itemId) {
+        return ResponseEntity.ok(itemService.checkUpdatedItemInPendingExchange(itemId));
+    }
+
     @PutMapping("/extend-item-for-free")
     @PreAuthorize("hasRole(T(vn.fptu.reasbe.model.constant.AppConstants).ROLE_RESIDENT)")
     public ResponseEntity<Boolean> extendItemForFree(@RequestParam Integer itemId) {
@@ -164,5 +169,11 @@ public class ItemController {
     @GetMapping("/check-upload-item-reach-limit")
     public ResponseEntity<Boolean> isReachMaxOfUploadItemThisMonth() {
         return ResponseEntity.ok(itemService.isReachMaxOfUploadItemThisMonth());
+    }
+
+    @PreAuthorize("hasRole(T(vn.fptu.reasbe.model.constant.AppConstants).ROLE_RESIDENT)")
+    @GetMapping("/check-availability-of-seller-item")
+    public ResponseEntity<Boolean> isSellerItemStillAvailable(Integer exchangeRequestId) {
+        return ResponseEntity.ok(itemService.isSellerItemStillAvailable(exchangeRequestId));
     }
 }

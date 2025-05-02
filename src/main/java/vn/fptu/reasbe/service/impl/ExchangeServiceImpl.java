@@ -487,7 +487,29 @@ public class ExchangeServiceImpl implements ExchangeService {
         }
         vectorStoreService.addNewItem(items);
 
-        return exchangeRequestRepository.save(request);
+        ExchangeRequest exchangeRequest = exchangeRequestRepository.save(request);
+
+        sendNotificationToRelatedCancelledExchangeRequestBuyer(request, exchangeRequest);
+        return exchangeRequest;
+    }
+
+    private void sendNotificationToRelatedCancelledExchangeRequestBuyer(ExchangeRequest request, ExchangeRequest exchangeRequest) {
+        // get old exchange request with owner item that got cancelled
+        List<ExchangeRequest> oldExchangeRequests = exchangeRequestRepository.findRelatedCancelledExchangeRequests(request.getSellerItem(), exchangeRequest.getLastModificationDate());
+
+        // check if their item is still AVAILABLE, send notification to them
+        vn.fptu.reasbe.model.mongodb.User sender = userMService.getAdmin();
+        Item sellerItem = exchangeRequest.getSellerItem();
+
+        for (ExchangeRequest oldRequest : oldExchangeRequests) {
+            if (Objects.isNull(oldRequest.getBuyerItem()) || oldRequest.getBuyerItem().getStatusItem().equals(StatusItem.AVAILABLE)) {
+                vn.fptu.reasbe.model.mongodb.User recipient = userMService.findByUsername(getBuyer(oldRequest).getUserName());
+                Notification notification = new Notification(sender.getUserName(), recipient.getUserName(),
+                        sellerItem.getItemName() + " is now available for exchange. Click here to re-create the exchange request #EX" + oldRequest.getId(),
+                        new Date(), TypeNotification.EXCHANGE_REQUEST, recipient.getRegistrationTokens());
+                notificationService.saveAndSendNotification(notification);
+            }
+        }
     }
 
     private ExchangeRequest getExchangeRequestById(Integer id) {
@@ -595,7 +617,7 @@ public class ExchangeServiceImpl implements ExchangeService {
 
     private void checkIfExchangeIsPending(ExchangeRequest request) {
         if (!request.getStatusExchangeRequest().equals(StatusExchangeRequest.PENDING)) {
-                throw new ReasApiException(HttpStatus.BAD_REQUEST, "error.exchangeRequestNotPending");
+            throw new ReasApiException(HttpStatus.BAD_REQUEST, "error.exchangeRequestNotPending");
         }
     }
 
@@ -623,7 +645,7 @@ public class ExchangeServiceImpl implements ExchangeService {
 
         exchangeRequestRepository.saveAll(requests);
     }
-    
+
     private User getBuyer(ExchangeRequest request) {
         return request.getBuyerItem() != null ? request.getBuyerItem().getOwner() : request.getPaidBy();
     }

@@ -49,6 +49,7 @@ import vn.fptu.reasbe.repository.ItemRepository;
 import vn.fptu.reasbe.service.AuthService;
 import vn.fptu.reasbe.service.BrandService;
 import vn.fptu.reasbe.service.CategoryService;
+import vn.fptu.reasbe.service.ExchangeService;
 import vn.fptu.reasbe.service.ItemService;
 import vn.fptu.reasbe.service.UserLocationService;
 import vn.fptu.reasbe.service.SubscriptionPlanService;
@@ -183,11 +184,9 @@ public class ItemServiceImpl implements ItemService {
             throw new ReasApiException(HttpStatus.BAD_REQUEST, "error.cannotUpdateItem");
         }
 
-        if (existedItem.getStatusItem().equals(StatusItem.AVAILABLE)) {
-            boolean isInAvailableExchangeRequest = exchangeRequestRepository.existByItemAndStatus(existedItem, StatusExchangeRequest.PENDING);
-            if (isInAvailableExchangeRequest) {
-                throw new ReasApiException(HttpStatus.BAD_REQUEST, "error.updatedItemExistsInExchangeRequest");
-            }
+        if (existedItem.getStatusItem().equals(StatusItem.AVAILABLE) &&
+                Boolean.TRUE.equals(checkUpdatedItemInPendingExchange(existedItem.getId()))) {
+            throw new ReasApiException(HttpStatus.BAD_REQUEST, "error.updatedItemExistsInExchangeRequest");
         }
 
         itemMapper.updateItem(existedItem, request);
@@ -469,6 +468,11 @@ public class ItemServiceImpl implements ItemService {
         return true;
     }
 
+    @Override
+    public Boolean checkUpdatedItemInPendingExchange(Integer itemId) {
+        return exchangeRequestRepository.existByItemAndStatus(itemId, StatusExchangeRequest.PENDING);
+    }
+
     public DistanceMatrixResponse getDistanceMatrix(double originLat, double originLng, List<Item> items) {
         String destinations = items.stream()
                 .map(item -> item.getUserLocation().getLatitude() + "," + item.getUserLocation().getLongitude())
@@ -605,6 +609,13 @@ public class ItemServiceImpl implements ItemService {
 
         // No subscription this month (or expired before month start)
         return totalUploadedThisMonth >= AppConstants.MAX_ITEM_UPLOADED;
+    }
+
+    @Override
+    public Boolean isSellerItemStillAvailable(Integer exchangeRequestId) {
+        ExchangeRequest exchangeRequest = exchangeRequestRepository.findById(exchangeRequestId)
+                .orElseThrow(() -> new ResourceNotFoundException("ExchangeRequest", "id", exchangeRequestId));
+        return exchangeRequest.getSellerItem().getStatusItem() == StatusItem.AVAILABLE;
     }
 
     private Page<Item> getAllItemByUserIdAndStatusItem(Integer userId, StatusItem statusItem, Pageable pageable) {

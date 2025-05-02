@@ -18,6 +18,4 @@ public interface UserLocationRepository extends JpaRepository<UserLocation, Inte
     Page<UserLocation> findAllByUserAndStatusEntity(User user, StatusEntity statusEntity, Pageable pageable);
 
     Optional<UserLocation> findByIdAndUserAndStatusEntity(Integer id, User user, StatusEntity statusEntity);
-
-    boolean existsByIsPrimaryTrueAndUserAndStatusEntity(User user, StatusEntity statusEntity);
 }
