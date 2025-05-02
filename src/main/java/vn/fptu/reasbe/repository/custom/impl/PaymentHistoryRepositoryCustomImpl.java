@@ -160,7 +160,8 @@ public class PaymentHistoryRepositoryCustomImpl extends AbstractRepositoryCustom
                 builder.and(paymentHistory.userSubscription.user.id.eq(request.getUserId()));
             }
             if (request.getTransactionId() != null) {
-                builder.and(paymentHistory.transactionId.eq(request.getTransactionId()));
+                String transactionIdStr = String.valueOf(request.getTransactionId());
+                builder.and(paymentHistory.transactionId.stringValue().like("%" + transactionIdStr + "%"));
             }
             if (request.getPrice() != null) {
                 builder.and(paymentHistory.amount.eq(request.getPrice()));

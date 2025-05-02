@@ -215,8 +215,9 @@ public class CriticalReportServiceImpl implements CriticalReportService {
         vn.fptu.reasbe.model.mongodb.User sender = userMService.findByUsername(currentUser.getUserName());
         vn.fptu.reasbe.model.mongodb.User recipient = userMService.findByUsername(existedReport.getReporter().getUserName());
         Notification notification = new Notification(sender.getUserName(), recipient.getUserName(),
-                "Report #" + existedReport.getId() + " has been " + existedReport.getStatusCriticalReport().toString().toLowerCase() + ".\n" +
-                        "Staff: " + sender.getFullName() + " response: " + existedReport.getContentResponse(),
+                "Report #" + existedReport.getId() + " has been marked as " +
+                        existedReport.getStatusCriticalReport().toString().toLowerCase() +
+                        " by "+ sender.getFullName() + ".",
                 new Date(), TypeNotification.REPORT_RESPONSE, recipient.getRegistrationTokens());
 
         notificationService.saveAndSendNotification(notification);

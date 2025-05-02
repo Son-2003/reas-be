@@ -255,14 +255,14 @@ public class ItemServiceImpl implements ItemService {
             }
 
             notification = new Notification(sender.getUserName(), recipient.getUserName(),
-                    "Your item has been approved",
+                    "Your item: " + pendingItem.getItemName() + " has been approved",
                     new Date(), TypeNotification.UPLOAD_ITEM, recipient.getRegistrationTokens());
 
         } else if (status.equals(StatusItem.REJECTED)) {
             pendingItem.setStatusItem(StatusItem.REJECTED);
 
             notification = new Notification(sender.getUserName(), recipient.getUserName(),
-                    "Your item has been rejected",
+                    "Your item: " + pendingItem.getItemName() + " has been rejected",
                     new Date(), TypeNotification.UPLOAD_ITEM, recipient.getRegistrationTokens());
         } else {
             throw new ReasApiException(HttpStatus.BAD_REQUEST, "error.invalidStatusItem");
@@ -573,6 +573,13 @@ public class ItemServiceImpl implements ItemService {
                         now
                 );
 
+        // case current subscription is premium
+        UserSubscription currentSub = userSubscriptionService.getUserCurrentSubscription();
+
+        if (Objects.nonNull(currentSub) && totalUploadedThisMonth >= AppConstants.MAX_ITEM_UPLOADED_PREMIUM) {
+            return true;
+        }
+
         // Get user’s most recent subscription in current month
         UserSubscription lastSub = userSubscriptionService.getUserSubscriptionInCurrentMonth();
 
@@ -601,7 +608,7 @@ public class ItemServiceImpl implements ItemService {
                 int allowedAfterExpiry = Math.min(premiumLeft, fallbackFreeCap);
 
                 // If they’ve already hit the combined allowance, block
-                if (totalUploadedThisMonth >= usedBeforeExpiry + allowedAfterExpiry) {
+                if (totalUploadedThisMonth >= (usedBeforeExpiry + allowedAfterExpiry)) {
                     return true;
                 }
             }
