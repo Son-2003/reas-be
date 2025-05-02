@@ -46,5 +46,5 @@ public interface ItemRepository extends JpaRepository<Item, Integer>, QuerydslPr
                                @Param("statusItem") String statusItem,
                                @Param("statusEntity") String statusEntity);
 
-    Integer countByOwnerAndStatusItemInAndStatusEntityAndCreationDateBetween(User user, List<StatusItem> statusItems, StatusEntity statusEntity, LocalDateTime from, LocalDateTime to);
+    Integer countByOwnerAndStatusItemInAndStatusEntityAndLastModificationDateBetween(User user, List<StatusItem> statusItems, StatusEntity statusEntity, LocalDateTime from, LocalDateTime to);
 }

@@ -565,7 +565,7 @@ public class ItemServiceImpl implements ItemService {
         );
 
         int totalUploadedThisMonth = itemRepository
-                .countByOwnerAndStatusItemInAndStatusEntityAndCreationDateBetween(
+                .countByOwnerAndStatusItemInAndStatusEntityAndLastModificationDateBetween(
                         currentUser,
                         countedStatuses,
                         StatusEntity.ACTIVE,
@@ -587,7 +587,7 @@ public class ItemServiceImpl implements ItemService {
             if (!endDate.isBefore(monthStart) && endDate.isBefore(now)) {
                 // Count how many were uploaded before subscription expired
                 int usedBeforeExpiry = itemRepository
-                        .countByOwnerAndStatusItemInAndStatusEntityAndCreationDateBetween(
+                        .countByOwnerAndStatusItemInAndStatusEntityAndLastModificationDateBetween(
                                 currentUser,
                                 countedStatuses,
                                 StatusEntity.ACTIVE,
