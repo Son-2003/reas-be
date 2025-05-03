@@ -576,8 +576,8 @@ public class ItemServiceImpl implements ItemService {
         // case current subscription is premium
         UserSubscription currentSub = userSubscriptionService.getUserCurrentSubscription();
 
-        if (Objects.nonNull(currentSub) && totalUploadedThisMonth >= AppConstants.MAX_ITEM_UPLOADED_PREMIUM) {
-            return true;
+        if (Objects.nonNull(currentSub)) {
+            return totalUploadedThisMonth >= AppConstants.MAX_ITEM_UPLOADED_PREMIUM;
         }
 
         // Get user’s most recent subscription in current month
@@ -612,10 +612,12 @@ public class ItemServiceImpl implements ItemService {
                     return true;
                 }
             }
+        } else {
+            // No subscription this month (or expired before month start)
+            return totalUploadedThisMonth >= AppConstants.MAX_ITEM_UPLOADED;
         }
 
-        // No subscription this month (or expired before month start)
-        return totalUploadedThisMonth >= AppConstants.MAX_ITEM_UPLOADED;
+        return false;
     }
 
     @Override
