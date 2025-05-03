@@ -591,6 +591,10 @@ public class ExchangeServiceImpl implements ExchangeService {
         if (!notExchangedExchanges.isEmpty()) {
             notExchangedExchanges.forEach(request -> {
                 request.getExchangeHistory().setStatusExchangeHistory(StatusExchangeHistory.SUCCESSFUL);
+                request.getSellerItem().setStatusItem(StatusItem.EXCHANGED);
+                if (request.getBuyerItem() != null) {
+                    request.getBuyerItem().setStatusItem(StatusItem.EXCHANGED);
+                }
 
                 vn.fptu.reasbe.model.mongodb.User sender = userMService.getAdmin();
 
