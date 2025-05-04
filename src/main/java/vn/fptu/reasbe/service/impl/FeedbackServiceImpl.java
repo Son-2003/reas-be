@@ -14,6 +14,7 @@ import vn.fptu.reasbe.model.entity.Item;
 import vn.fptu.reasbe.model.entity.User;
 import vn.fptu.reasbe.model.enums.core.StatusEntity;
 import vn.fptu.reasbe.model.enums.exchange.StatusExchangeHistory;
+import vn.fptu.reasbe.model.enums.user.RoleName;
 import vn.fptu.reasbe.model.exception.ReasApiException;
 import vn.fptu.reasbe.model.exception.ResourceNotFoundException;
 import vn.fptu.reasbe.repository.ExchangeHistoryRepository;
@@ -23,6 +24,8 @@ import vn.fptu.reasbe.service.FeedbackService;
 import vn.fptu.reasbe.service.ItemService;
 import vn.fptu.reasbe.service.UserService;
 import vn.fptu.reasbe.utils.mapper.FeedbackMapper;
+
+import java.util.List;
 
 import static vn.fptu.reasbe.model.dto.core.BaseSearchPaginationResponse.getPageable;
 
@@ -39,24 +42,38 @@ public class FeedbackServiceImpl implements FeedbackService {
     private final FeedbackMapper feedbackMapper;
 
     @Override
-    public BaseSearchPaginationResponse<FeedbackResponse> getAllFeedbackOfUser(int pageNo, int pageSize, String sortBy, String sortDir, Integer userId, Integer rating) {
+    public BaseSearchPaginationResponse<FeedbackResponse> getAllFeedbackOfUser(int pageNo, int pageSize, String sortBy, String sortDir, Integer userId, Integer rating, List<StatusEntity> statusEntities) {
+
+        User currentUser = authService.getCurrentUser();
         User user = userService.getUserById(userId);
+
+        boolean isResident = currentUser == null || RoleName.ROLE_RESIDENT.equals(currentUser.getRole().getName());
+
+        List<StatusEntity> statusList;
+
+        if (isResident) {
+            statusList = List.of(StatusEntity.ACTIVE);
+        } else if (statusEntities == null || statusEntities.isEmpty()) {
+            statusList = List.of(StatusEntity.ACTIVE, StatusEntity.INACTIVE);
+        } else {
+            statusList = statusEntities;
+        }
+
+        if (rating != null && (rating < 1 || rating > 5)) {
+            throw new ReasApiException(HttpStatus.BAD_REQUEST, "error.invalidRating");
+        }
 
         Page<Feedback> feedbacks;
 
         if (rating != null) {
-            if (rating < 1 || rating > 5) {
-                throw new ReasApiException(HttpStatus.BAD_REQUEST, "error.invalidRating");
-            } else {
-                feedbacks = feedbackRepository.getAllByItemOwnerAndRatingAndStatusEntity(user, rating, StatusEntity.ACTIVE, getPageable(pageNo, pageSize, sortBy, sortDir));
-            }
+            feedbacks = feedbackRepository.getAllByItemOwnerAndRatingAndStatusEntityIn(user, rating, statusList, getPageable(pageNo, pageSize, sortBy, sortDir));
         } else {
-            feedbacks = feedbackRepository.getAllByItemOwnerAndStatusEntity(user, StatusEntity.ACTIVE, getPageable(pageNo, pageSize, sortBy, sortDir));
-
+            feedbacks = feedbackRepository.getAllByItemOwnerAndStatusEntityIn(user, statusList, getPageable(pageNo, pageSize, sortBy, sortDir));
         }
 
         return BaseSearchPaginationResponse.of(feedbacks.map(feedbackMapper::toFeedbackResponse));
     }
+
 
     @Override
     public FeedbackResponse viewFeedbackDetail(Integer feedbackId) {

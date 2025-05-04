@@ -19,6 +19,7 @@ import vn.fptu.reasbe.utils.mapper.ItemMapper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static vn.fptu.reasbe.model.dto.core.BaseSearchPaginationResponse.getPageable;
 
@@ -48,6 +49,10 @@ public class FavoriteServiceImpl implements FavoriteService {
 
         if (!item.getStatusItem().equals(StatusItem.AVAILABLE)) {
             throw new ReasApiException(HttpStatus.BAD_REQUEST, "error.cannotAddToFavorite");
+        }
+
+        if (Objects.equals(item.getOwner(), user)) {
+            throw new ReasApiException(HttpStatus.BAD_REQUEST, "error.cannotAddYourOwnItemToFavorite");
         }
 
         if (user.getFavorites() != null && user.getFavorites().stream().anyMatch(favorite -> favorite.getItem().equals(item))) {

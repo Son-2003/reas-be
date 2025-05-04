@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import vn.fptu.reasbe.model.constant.AppConstants;
@@ -49,7 +50,6 @@ import vn.fptu.reasbe.repository.ItemRepository;
 import vn.fptu.reasbe.service.AuthService;
 import vn.fptu.reasbe.service.BrandService;
 import vn.fptu.reasbe.service.CategoryService;
-import vn.fptu.reasbe.service.ExchangeService;
 import vn.fptu.reasbe.service.ItemService;
 import vn.fptu.reasbe.service.UserLocationService;
 import vn.fptu.reasbe.service.SubscriptionPlanService;
@@ -62,7 +62,6 @@ import vn.fptu.reasbe.utils.common.GeometryUtils;
 import vn.fptu.reasbe.utils.mapper.DesiredItemMapper;
 import vn.fptu.reasbe.utils.mapper.ItemMapper;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -414,7 +413,7 @@ public class ItemServiceImpl implements ItemService {
 
         DistanceMatrixResponse response = getDistanceMatrix(latitude, longitude, items);
 
-        if (response.getRows().isEmpty()) {
+        if (Objects.isNull(response) || response.getRows().isEmpty()) {
             return BaseSearchPaginationResponse.of(Page.empty());
         }
 
@@ -486,12 +485,15 @@ public class ItemServiceImpl implements ItemService {
                 "&api_key=" + GOONGIO_API_KEY;
 
         //Calling API
-        DistanceMatrixResponse response = restTemplate.getForObject(url, DistanceMatrixResponse.class);
-        if (response == null) {
-            throw new ReasApiException(HttpStatus.BAD_REQUEST, "error.distanceMatrixAPIResponseNull");
+        try {
+            return restTemplate.getForObject(url, DistanceMatrixResponse.class);
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
+                return null;
+            } else {
+                throw new ReasApiException(HttpStatus.valueOf(e.getStatusCode().value()), e.getMessage());
+            }
         }
-
-        return response;
     }
 
     @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Ho_Chi_Minh")

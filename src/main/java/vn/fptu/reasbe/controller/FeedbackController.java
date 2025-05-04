@@ -17,7 +17,10 @@ import vn.fptu.reasbe.model.constant.AppConstants;
 import vn.fptu.reasbe.model.dto.core.BaseSearchPaginationResponse;
 import vn.fptu.reasbe.model.dto.feedback.FeedbackRequest;
 import vn.fptu.reasbe.model.dto.feedback.FeedbackResponse;
+import vn.fptu.reasbe.model.enums.core.StatusEntity;
 import vn.fptu.reasbe.service.FeedbackService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/feedback")
@@ -33,9 +36,10 @@ public class FeedbackController {
             @RequestParam(name = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
             @RequestParam(name = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir,
             @RequestParam Integer userId,
-            @RequestParam(required = false) Integer rating
+            @RequestParam(required = false) Integer rating,
+            @RequestParam(required = false) List<StatusEntity> statusEntities
     ) {
-        return ResponseEntity.ok(feedbackService.getAllFeedbackOfUser(pageNo, pageSize, sortBy, sortDir, userId, rating));
+        return ResponseEntity.ok(feedbackService.getAllFeedbackOfUser(pageNo, pageSize, sortBy, sortDir, userId, rating, statusEntities));
     }
 
     @GetMapping("/{feedbackId}")

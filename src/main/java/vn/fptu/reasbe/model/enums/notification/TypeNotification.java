@@ -9,5 +9,6 @@ public enum TypeNotification {
     UPLOAD_ITEM,
     EXCHANGE_REQUEST,
     ITEM_EXPIRED,
-    REPORT_RESPONSE
+    REPORT_RESPONSE,
+    REPORT_HANDLED,
 }
