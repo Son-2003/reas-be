@@ -14,9 +14,9 @@ import vn.fptu.reasbe.model.entity.ExchangeRequest;
 import vn.fptu.reasbe.model.entity.Feedback;
 import vn.fptu.reasbe.model.entity.Item;
 import vn.fptu.reasbe.model.entity.User;
+import vn.fptu.reasbe.model.enums.core.StatusEntity;
 import vn.fptu.reasbe.model.enums.exchange.StatusExchangeHistory;
 
-import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -62,24 +62,25 @@ public interface UserMapper {
                 .count();
     }
 
+    default boolean isActiveFeedback(Feedback feedback) {
+        return feedback != null && feedback.getStatusEntity() == StatusEntity.ACTIVE;
+    }
 
-    // Count feedbacks only from seller transactions
     default Integer mapNumOfFeedbacks(User user) {
         if (user.getItems() == null) return 0;
 
         return (int) user.getItems().stream()
                 .map(Item::getFeedback)
-                .filter(Objects::nonNull)
+                .filter(this::isActiveFeedback)
                 .count();
     }
 
-    // Calculate average rating only from seller transactions
     default Double mapNumOfRatings(User user) {
         if (user.getItems() == null) return 0.0;
 
         return user.getItems().stream()
                 .map(Item::getFeedback)
-                .filter(Objects::nonNull)
+                .filter(this::isActiveFeedback)
                 .mapToDouble(Feedback::getRating)
                 .average()
                 .orElse(0.0);
