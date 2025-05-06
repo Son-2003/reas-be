@@ -9,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 import vn.fptu.reasbe.model.dto.exchange.ExchangeHistoryResponse;
 import vn.fptu.reasbe.model.dto.item.ItemResponse;
 import vn.fptu.reasbe.model.dto.user.UserResponse;
+import vn.fptu.reasbe.model.enums.core.StatusEntity;
 
 import java.time.LocalDateTime;
 
@@ -36,4 +37,6 @@ public class FeedbackResponse {
     LocalDateTime creationDate;
 
     boolean isUpdated;
+
+    StatusEntity statusEntity;
 }
