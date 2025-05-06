@@ -190,6 +190,7 @@ VALUES
     ('ACTIVE', 'minhquan','2025-04-02 08:31:14.329','2025-04-02 08:31:14.329','ducson',1, 'Xiaomi rice cooker DBF201', 'Auto adjusts cooking parameters based on the type of rice', '2025-04-13 12:00:00', '2025-04-27 00:00:00','GOOD', 'EXPI', 2, 4, 'https://res.cloudinary.com/dpysbryyk/image/upload/v1746244379/gffju32c19fk9n5nrr2a.webp', 6, 10, 'OPEN', 800000.00, NULL, TRUE),
     ('ACTIVE', 'tiendung','2025-04-02 08:31:14.329','2025-04-02 08:31:14.329','ducson',1, 'Panasonic microwave GM34', 'combines microwave and grill function, making it suitable for a variety of cooking needs', '2025-04-13 12:00:00', '2025-05-17 00:00:00','LNEW', 'AVAI', 4, 7, 'https://res.cloudinary.com/dpysbryyk/image/upload/v1746244262/kw6qzjdlg2hfb5z5n74k.jpg', 3, 4, 'OPEN', 2200000.00, NULL, TRUE);
 
+
 INSERT INTO public."ITEM_METHODEXCHANGES" ("ITEM_ITEM_ID", "METHOD_EXCHANGE") VALUES
                                                                                   (1, 'PICK'),
                                                                                   (1, 'MEET'),

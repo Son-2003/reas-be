@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   # PgVector
   postgres:
@@ -31,6 +33,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: reas
       MONGO_INITDB_ROOT_PASSWORD: reas
+      MONGO_INITDB_DATABASE: chat_app
     networks:
       - reas_network
 
@@ -51,9 +54,33 @@ services:
     networks:
       - reas_network
 
+  # Spring Boot Application (backend)
+  app:
+    image: ducson29/reas-be:latest
+    container_name: reas_be_container
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GMAIL_APP_PASSWORD=${GMAIL_APP_PASSWORD}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - PAYOS_API_KEY=${PAYOS_API_KEY}
+      - PAYOS_CHECKSUM_KEY=${PAYOS_CHECKSUM_KEY}
+      - PAYOS_CLIENT_ID=${PAYOS_CLIENT_ID}
+      - GOONGIO_API_KEY=${GOONGIO_API_KEY}
+    depends_on:
+      - postgres
+      - mongo
+    networks:
+      - reas_network
+
 volumes:
   postgres_data:
   mongo_data:
 
 networks:
   reas_network:
+
