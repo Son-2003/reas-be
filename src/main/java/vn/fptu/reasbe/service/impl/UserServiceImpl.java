@@ -96,7 +96,6 @@ public class UserServiceImpl implements UserService {
     private void updateStaffMongoAccount(User user) {
         vn.fptu.reasbe.model.mongodb.User userM = userMService.findByRefId(user.getId());
         if (userM != null) {
-            userM.setUserName(user.getUserName());
             userM.setFullName(user.getFullName());
             userMService.saveUser(userM);
         }

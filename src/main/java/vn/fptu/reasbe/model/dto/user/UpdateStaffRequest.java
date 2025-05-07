@@ -29,7 +29,7 @@ public class UpdateStaffRequest {
     Integer id;
 
     @NotBlank(message = "Username cannot be blank")
-    @Size(min = 8, message = "Username must have at least 8 characters")
+    @Size(min = 2, message = "Username must have at least 2 characters")
     String userName;
 
     @NotBlank(message = "Full name cannot be blank")
